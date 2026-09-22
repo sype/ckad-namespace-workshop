@@ -1,0 +1,16 @@
+apiVersion: training.educates.dev/v1beta1
+kind: Workshop
+metadata:
+  name: ckad-namespace-resilience
+spec:
+  title: CKAD - Résilience dans un namespace
+  description: Atelier transversal sur workloads, stockage et isolation réseau.
+  duration: 75m
+  workshop:
+    files:
+      # À renseigner dans le dépôt d'infrastructure avec une release immuable.
+      - image:
+          url: REPLACE_WITH_RELEASE_ARTIFACT
+    env:
+      - name: WORKSHOP_MODE
+        value: full

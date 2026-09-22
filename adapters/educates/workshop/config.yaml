@@ -1,0 +1,8 @@
+modules:
+  activate:
+    - workshop-overview
+    - guardrails
+    - frontend
+    - stateful
+    - network-policy
+    - summary

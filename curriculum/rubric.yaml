@@ -1,0 +1,36 @@
+apiVersion: academy.wefactorit.example/v1alpha1
+kind: AssessmentRubric
+metadata:
+  name: ckad-namespace-resilience
+spec:
+  totalPoints: 100
+  passingScore: 80
+  checks:
+    - id: guardrails
+      points: 15
+      description: LimitRange et ResourceQuota présents et cohérents.
+    - id: frontend
+      points: 15
+      description: Deployment correctement étiqueté et Service relié (compatible avec le mode séquentiel).
+    - id: stateful
+      points: 25
+      required: true
+      description: StatefulSet, Service headless, PVC lié et données SQL accessibles.
+    - id: persistence
+      points: 15
+      description: Données conservées après recréation du Pod PostgreSQL.
+    - id: network-allow
+      points: 10
+      required: true
+      description: Le client frontend peut joindre PostgreSQL.
+    - id: network-deny
+      points: 10
+      required: true
+      description: Le client backend ne peut pas joindre PostgreSQL.
+    - id: probes-resources
+      points: 10
+      description: Probes de disponibilité et ressources explicites présentes.
+  notes:
+    - Chaque contrôle est indépendant afin de fournir un score partiel utile.
+    - Les contrôles stateful, network-allow et network-deny sont obligatoires pour réussir.
+    - Le nettoyage n'entre pas dans le score.

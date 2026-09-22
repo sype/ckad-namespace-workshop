@@ -1,0 +1,35 @@
+apiVersion: academy.wefactorit.example/v1alpha1
+kind: LearningObjectives
+metadata:
+  name: ckad-namespace-resilience
+spec:
+  title: "CKAD - Résilience dans un namespace"
+  durationMinutes: 75
+  level: intermediate
+  objectives:
+    - id: guardrails
+      domain: configuration
+      statement: Configurer des valeurs de ressources par défaut et un quota cohérent.
+    - id: stateless
+      domain: application-design-and-build
+      statement: Déployer et exposer une application stateless observable.
+    - id: stateful
+      domain: application-design-and-build
+      statement: Déployer PostgreSQL avec une identité stable et un stockage persistant.
+    - id: persistence
+      domain: application-observability-and-maintenance
+      statement: Prouver la conservation des données après recréation d'un Pod.
+    - id: network-policy
+      domain: services-and-networking
+      statement: Autoriser uniquement le frontend à joindre la base de données.
+    - id: diagnosis
+      domain: application-observability-and-maintenance
+      statement: Diagnostiquer les ressources avec describe, events et EndpointSlice.
+  prerequisites:
+    kubectl: ">=1.30"
+    namespacePrecreated: true
+    defaultStorageClass: true
+    networkPolicyEnforcement: true
+  executionModes:
+    - sequential
+    - full
