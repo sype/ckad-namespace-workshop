@@ -20,16 +20,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check shell syntax
-        run: bash -n scripts/*.sh
+        run: bash -n scripts/*.sh adapters/standalone/*.sh adapters/educates/workshop/setup.d/*.sh grader/*.sh grader/tests/*.sh tests/*.sh
 
       - name: Run ShellCheck
-        run: shellcheck scripts/*.sh
+        run: shellcheck scripts/*.sh adapters/standalone/*.sh adapters/educates/workshop/setup.d/*.sh grader/*.sh grader/tests/*.sh tests/*.sh
 
       - name: Parse YAML
         run: |
-          for file in manifests/*.yaml .github/workflows/*.yml; do
+          while IFS= read -r file; do
             ruby -e 'require "yaml"; YAML.load_stream(File.read(ARGV[0]))' "$file"
-          done
+          done < <(find . -type f \( -name '*.yaml' -o -name '*.yml' \) -print)
+
+      - name: Validate repository contract
+        run: ./tests/static.sh
 
       - name: Reject sensitive file types
         run: |
@@ -40,7 +43,7 @@ jobs:
 
       - name: Reject common credential markers
         run: |
-          if git grep -nE '(client-key-data:|token: +eyJ|BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY)' -- . ':!.github/workflows/validate.yml'; then
+          if git grep -nE '(client-key-data:|token: +eyJ|BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY)' -- . ':!.github/workflows/validate.yml' ':!tests/static.sh'; then
             echo 'Potential credential detected.' >&2
             exit 1
           fi

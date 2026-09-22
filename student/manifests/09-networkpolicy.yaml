@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-network-policy
+  labels:
+    app.kubernetes.io/part-of: ckad-namespace-workshop
+spec:
+  podSelector:
+    matchLabels:
+      app: database
+      tier: db
+  policyTypes:
+    - Ingress
+  # TODO: autoriser uniquement le frontend web sur TCP/5432.
+  ingress: []

@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-db
+  labels:
+    app.kubernetes.io/part-of: ckad-namespace-workshop
+spec:
+  serviceName: postgres-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+      tier: db
+  template:
+    metadata:
+      labels:
+        app: database
+        tier: db
+        app.kubernetes.io/part-of: ckad-namespace-workshop
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17.6-alpine
+          ports:
+            - name: postgres
+              containerPort: 5432
+          # TODO: injecter les trois clés de db-secret.
+          # TODO: monter db-config et un volume persistant.
+          # TODO: ajouter resources et readinessProbe.
+  # TODO: déclarer un volumeClaimTemplate ReadWriteOnce de 1Gi.

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-svc
+  labels:
+    app.kubernetes.io/part-of: ckad-namespace-workshop
+spec:
+  # TODO: rendre le Service headless et sélectionner PostgreSQL.
+  selector:
+    app: todo
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: postgres

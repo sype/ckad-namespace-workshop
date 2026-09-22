@@ -4,7 +4,7 @@ set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # shellcheck disable=SC2034 # Consommée par les scripts qui sourcent ce fichier.
-MANIFEST_DIR="${ROOT_DIR}/manifests"
+MANIFEST_DIR="${MANIFEST_DIR:-${ROOT_DIR}/solution/manifests}"
 KUBECTL_BIN="${KUBECTL_BIN:-kubectl}"
 
 command -v "${KUBECTL_BIN}" >/dev/null 2>&1 || {

@@ -14,3 +14,7 @@ Ne créez jamais de commit contenant :
 Les secrets de démonstration sont générés à l'exécution et restent dans le
 namespace temporaire. En cas de divulgation, révoquez immédiatement le jeton ou
 le compte concerné et purgez l'historique Git avant toute publication.
+
+Les adaptateurs publics ne doivent pas contenir d'URL d'API Kubernetes, d'IP,
+de nom de cluster ou de configuration LTI. Ces valeurs appartiennent au dépôt
+d'infrastructure privé qui consomme une release immuable de ce workshop.

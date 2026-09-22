@@ -1,127 +1,89 @@
 # CKAD Namespace Resilience Workshop
 
-Atelier pratique CKAD consacré au namespace comme périmètre d'isolation et de
-résilience. Le dépôt est générique : il ne contient ni kubeconfig, ni jeton,
-ni adresse de cluster, ni donnée personnelle.
+Atelier CKAD générique de 75 minutes sur l'isolation et la résilience dans un
+namespace. Il fonctionne en autonomie avec un kubeconfig fourni séparément ou
+comme contenu d'une session Educates. Ce dépôt ne contient aucune information
+d'accès à un cluster.
 
-## Objectifs
-
-- appliquer une `LimitRange` et un `ResourceQuota` ;
-- déployer un frontend Nginx et un Service ClusterIP ;
-- déployer PostgreSQL dans un StatefulSet avec stockage persistant ;
-- vérifier la persistance après recréation du pod ;
-- autoriser un client frontend et refuser un backend avec une NetworkPolicy ;
-- diagnostiquer puis nettoyer les ressources de l'atelier.
-
-Durée indicative : 75 minutes. Niveau : intermédiaire.
-
-## Prérequis
-
-- `kubectl` compatible avec la version du serveur Kubernetes (écart maximal
-  recommandé : une version mineure) ;
-- `openssl` disponible localement ;
-- un kubeconfig temporaire remis séparément par le formateur ;
-- un namespace déjà créé et attribué à l'étudiant ;
-- une StorageClass par défaut ;
-- un CNI qui applique les NetworkPolicies.
-
-Le kubeconfig, les jetons et les mots de passe ne doivent jamais être ajoutés
-à ce dépôt.
-
-## Démarrage rapide
+## Démarrage étudiant
 
 ```bash
 git clone https://github.com/sype/ckad-namespace-workshop.git
 cd ckad-namespace-workshop
-
-export KUBECONFIG="$HOME/Downloads/ckad-student.kubeconfig"
-
-./scripts/preflight.sh
-./scripts/deploy.sh
-./scripts/test.sh
+git checkout vX.Y.Z                 # version indiquée par le formateur
+export KUBECONFIG=/chemin/fourni
+./adapters/standalone/preflight.sh
 ```
 
-Les scripts utilisent exclusivement le namespace défini dans le contexte
-courant du kubeconfig. Ils refusent `default` et les namespaces système.
+Suivez ensuite [le parcours étudiant](student/README.md), complétez les `TODO`
+dans `student/manifests/`, puis lancez `./grader/verify.sh`.
 
-## Déroulé
+Le namespace est lu depuis `WORKSHOP_NAMESPACE`, ou à défaut depuis le contexte
+kubectl actif. Les scripts refusent `default` et les namespaces système.
 
-### 1. Vérifier l'accès
+## Objectifs
+
+- appliquer une `LimitRange` et un `ResourceQuota` cohérents ;
+- déployer et exposer un frontend avec ressources et readiness probe ;
+- exploiter PostgreSQL dans un StatefulSet avec PVC ;
+- démontrer la persistance après recréation du Pod ;
+- autoriser le frontend et refuser le backend avec une NetworkPolicy ;
+- diagnostiquer avec `describe`, les événements et EndpointSlice.
+
+Le barème automatisé vaut 100 points, avec un seuil recommandé de 80. La chaîne
+stateful et les deux contrôles réseau (autorisation et refus) sont obligatoires
+pour réussir. Les objectifs et le détail du barème sont versionnés dans
+`curriculum/`.
+
+## Démonstration formateur
 
 ```bash
 ./scripts/preflight.sh
-```
-
-Le script affiche le contexte et le namespace, vérifie les droits nécessaires,
-mais n'affiche ni serveur API ni jeton.
-
-### 2. Déployer
-
-```bash
-./scripts/deploy.sh
-```
-
-Le script applique les garde-fous, valide deux réplicas Nginx, teste le Service,
-puis réduit le frontend à zéro avant de créer PostgreSQL. Cette exécution
-séquentielle fonctionne aussi sur un cluster ayant peu de places disponibles.
-
-Le mot de passe PostgreSQL est généré localement avec `openssl`, envoyé
-directement à l'API Kubernetes et jamais écrit dans le dépôt.
-
-### 3. Tester
-
-```bash
+./scripts/deploy.sh                 # WORKSHOP_MODE=sequential par défaut
 ./scripts/test.sh
+./grader/verify.sh
+CONFIRM_CLEANUP=yes ./scripts/cleanup.sh
 ```
 
-Ce test recrée le pod PostgreSQL, vérifie que `Alice` et `Bob` sont toujours
-présents, puis exécute successivement les tests NetworkPolicy autorisé et refusé.
+Le mode `sequential` convient aux clusters contraints : le frontend est validé
+puis réduit à zéro avant PostgreSQL. Utilisez `WORKSHOP_MODE=full` pour conserver
+tous les workloads simultanément. Aucun mode ne crée ou supprime le namespace.
+Le Secret PostgreSQL est généré en mémoire et envoyé directement à l'API.
 
-### 4. Examiner
+Le corrigé valide deux réplicas par défaut. Pour une validation technique sur un
+cluster ne disposant que d'un seul emplacement de pod, le formateur peut utiliser
+`FRONTEND_REPLICAS=1`; le parcours étudiant et le mode Educates restent à deux.
 
-```bash
-kubectl get all,cm,secret,limitrange,resourcequota,networkpolicy,pvc
-kubectl describe resourcequota workshop-quota
-kubectl get events --sort-by='.metadata.creationTimestamp'
-```
-
-Le namespace étant déjà défini par le contexte, `-n` reste facultatif pour ces
-commandes interactives. Les scripts, eux, passent toujours le namespace de façon
-explicite.
-
-### 5. Nettoyer
-
-```bash
-./scripts/cleanup.sh
-```
-
-Le script demande une confirmation et supprime seulement les objets connus de
-l'atelier. Il ne supprime jamais le namespace ; cette opération reste sous le
-contrôle du formateur.
-
-## Arborescence
+## Organisation
 
 ```text
-.
-├── manifests/
-├── scripts/
-│   ├── _common.sh
-│   ├── preflight.sh
-│   ├── deploy.sh
-│   ├── test.sh
-│   └── cleanup.sh
-├── .github/workflows/validate.yml
-├── Makefile
-├── SECURITY.md
-└── README.md
+curriculum/             objectifs, prérequis et barème
+student/                consignes et templates TODO
+solution/               corrigé de référence
+grader/verify.sh        validation indépendante, score /100
+adapters/standalone/    kubeconfig externe, namespace attribué
+adapters/educates/      contenu et squelette de packaging Educates
+scripts/                démonstration, tests et nettoyage formateur
+tests/                  validations statiques du dépôt
 ```
 
-## Avertissement stockage
+Le dossier historique `manifests/` est conservé temporairement pour les liens
+existants. La source canonique du corrigé est désormais `solution/manifests/`.
 
-Le test démontre la persistance après recréation d'un pod. Il ne démontre pas
-la résilience à la perte d'un nœud. La suppression du PVC ou du namespace peut
-entraîner la suppression définitive des données selon la `reclaimPolicy`.
+## Prérequis plateforme
 
-## Licence
+- version cliente `kubectl` compatible avec le serveur ;
+- namespace précréé et droits limités à celui-ci ;
+- StorageClass par défaut ;
+- CNI appliquant les NetworkPolicies ;
+- `openssl` pour la génération du Secret.
 
-MIT - WeFactorIT.
+## Publication
+
+Les parcours et plateformes doivent référencer une release immuable, jamais une
+branche mouvante. Consultez [RELEASES.md](RELEASES.md) pour la convention de tags.
+
+## Sécurité et licence
+
+Ne commitez jamais kubeconfig, token, mot de passe, IP interne ou donnée
+personnelle. Consultez [SECURITY.md](SECURITY.md). Licence MIT - WeFactorIT.

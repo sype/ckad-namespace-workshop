@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-config
+  labels:
+    app.kubernetes.io/part-of: ckad-namespace-workshop
+data:
+  init.sql: |
+    -- TODO: créer la table users et insérer Alice et Bob.
