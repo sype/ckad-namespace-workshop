@@ -19,4 +19,6 @@ Lorsque vous avez terminé :
 ```
 
 Le score de passage recommandé est de 80/100. Le vérificateur ne révèle aucun
-secret et ne supprime aucune ressource.
+secret. Pour prouver la persistance et les règles réseau, il recrée le Pod
+PostgreSQL et crée puis supprime deux Pods de test dédiés. Il ne supprime ni les
+manifests évalués, ni le PVC, ni le namespace.

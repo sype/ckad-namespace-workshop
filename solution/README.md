@@ -5,6 +5,7 @@ de compatibilité et au mode de démonstration, pas au parcours étudiant.
 
 ```bash
 WORKSHOP_MODE=sequential ./scripts/deploy.sh
+./scripts/test.sh
 ./grader/verify.sh
 ```
 
