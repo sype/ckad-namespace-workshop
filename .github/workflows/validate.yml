@@ -22,10 +22,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check shell syntax
-        run: bash -n scripts/*.sh adapters/standalone/*.sh adapters/educates/workshop/setup.d/*.sh grader/*.sh grader/tests/*.sh tests/*.sh
+        run: find . -type f -name '*.sh' -print0 | xargs -0 -n1 bash -n
 
       - name: Run ShellCheck
-        run: shellcheck scripts/*.sh adapters/standalone/*.sh adapters/educates/workshop/setup.d/*.sh grader/*.sh grader/tests/*.sh tests/*.sh
+        run: find . -type f -name '*.sh' -print0 | xargs -0 shellcheck
 
       - name: Parse YAML
         run: |

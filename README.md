@@ -5,6 +5,24 @@ namespace. Il fonctionne en autonomie avec un kubeconfig fourni séparément ou
 comme contenu d'une session Educates. Ce dépôt ne contient aucune information
 d'accès à un cluster.
 
+## Parcours réseau CKAD
+
+Le dépôt propose désormais une progression applicative qui reste volontairement
+dans le périmètre CKAD :
+
+1. [`service-routing`](scenarios/service-routing/README.md) — réparer les
+   sélecteurs/ports d'un Service, puis vérifier EndpointSlice, DNS et HTTP ;
+2. [`network-policy`](scenarios/network-policy/README.md) — construire un
+   default-deny, préserver DNS et autoriser un seul chemin applicatif ;
+3. le capstone racine — combiner Service, StatefulSet, stockage, probes,
+   ressources et NetworkPolicy.
+
+La configuration CNI, les routes et interfaces du nœud, kube-proxy et
+l'administration de CoreDNS restent hors périmètre : ce sont des compétences
+CKA. Chaque scénario peut être lancé avec `./scenarios/run.sh <id>` sur le
+cluster courant ; l'adaptateur local k3d est documenté dans
+[`adapters/local/README.md`](adapters/local/README.md).
+
 ## Démarrage étudiant
 
 ```bash
@@ -63,6 +81,8 @@ solution/               corrigé de référence
 grader/verify.sh        validation indépendante, score /100
 adapters/standalone/    kubeconfig externe, namespace attribué
 adapters/educates/      contenu et squelette de packaging Educates
+adapters/local/         profil local k3d et contrat de confiance
+scenarios/              micro-labs réseau CKAD autonomes
 scripts/                démonstration, tests et nettoyage formateur
 tests/                  validations statiques du dépôt
 ```

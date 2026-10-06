@@ -1,0 +1,24 @@
+apiVersion: academy.wefactorit.example/v1alpha1
+kind: LearningObjectives
+metadata:
+  name: ckad-service-routing
+spec:
+  title: "CKAD - Diagnostiquer un Service"
+  durationMinutes: 25
+  level: beginner
+  objectives:
+    - id: service-contract
+      domain: services-and-networking
+      statement: Relier un Service à ses Pods avec selector, port et targetPort.
+    - id: endpoints
+      domain: services-and-networking
+      statement: Utiliser EndpointSlice pour expliquer le routage effectif.
+    - id: dns-http
+      domain: services-and-networking
+      statement: Vérifier séparément la résolution DNS et le flux HTTP.
+    - id: diagnosis
+      domain: application-observability-and-maintenance
+      statement: Diagnostiquer avec get, describe, logs et jsonpath.
+  boundaries:
+    included: [Service, EndpointSlice, DNS applicatif]
+    excluded: [CNI, kube-proxy, routes du noeud, administration CoreDNS]
