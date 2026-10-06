@@ -1,0 +1,13 @@
+apiVersion: academy.wefactorit.example/v1alpha1
+kind: AssessmentRubric
+metadata:
+  name: ckad-network-policy
+spec:
+  totalPoints: 100
+  passingScore: 80
+  checks:
+    - {id: default-deny, points: 20, required: true, description: Ingress et egress sont isolés par défaut.}
+    - {id: dns-egress, points: 20, required: true, description: DNS UDP/TCP 53 reste autorisé vers kube-system.}
+    - {id: least-privilege, points: 20, required: true, description: Seul access=api peut joindre app=api sur TCP/8080.}
+    - {id: allowed-runtime, points: 20, required: true, description: client-allowed atteint api.}
+    - {id: denied-runtime, points: 20, required: true, description: client-blocked ne peut pas atteindre api.}

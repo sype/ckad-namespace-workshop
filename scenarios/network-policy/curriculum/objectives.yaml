@@ -1,0 +1,24 @@
+apiVersion: academy.wefactorit.example/v1alpha1
+kind: LearningObjectives
+metadata:
+  name: ckad-network-policy
+spec:
+  title: "CKAD - Isoler un flux applicatif"
+  durationMinutes: 35
+  level: intermediate
+  objectives:
+    - id: default-deny
+      domain: services-and-networking
+      statement: Isoler par défaut les flux ingress et egress.
+    - id: dns-egress
+      domain: services-and-networking
+      statement: Préserver explicitement DNS pour les clients isolés.
+    - id: least-privilege
+      domain: services-and-networking
+      statement: Autoriser uniquement le client labellisé vers l'API sur TCP/8080.
+    - id: runtime-validation
+      domain: application-observability-and-maintenance
+      statement: Prouver les chemins autorisé et refusé à l'exécution.
+  boundaries:
+    included: [NetworkPolicy, podSelector, namespaceSelector, ingress, egress]
+    excluded: [installation CNI, politiques propriétaires, réseau du noeud]

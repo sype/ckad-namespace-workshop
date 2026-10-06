@@ -1,0 +1,26 @@
+apiVersion: academy.wefactorit.example/v1alpha1
+kind: AssessmentRubric
+metadata:
+  name: ckad-service-routing
+spec:
+  totalPoints: 100
+  passingScore: 80
+  checks:
+    - id: workload
+      points: 20
+      description: Le Deployment catalog possède deux Pods prêts.
+    - id: service-contract
+      points: 25
+      description: Selector, port 80 et targetPort http sont corrects.
+    - id: endpoints
+      points: 25
+      required: true
+      description: EndpointSlice publie au moins deux endpoints prêts.
+    - id: dns
+      points: 15
+      required: true
+      description: Le nom catalog est résolu depuis un Pod.
+    - id: http
+      points: 15
+      required: true
+      description: Le Service répond en HTTP depuis un Pod.

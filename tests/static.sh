@@ -34,4 +34,21 @@ if git grep -nE '(client-key-data:|token: +eyJ|BEGIN (RSA |EC |OPENSSH )?PRIVATE
 fi
 
 echo "OK: structure, scripts, barème et garde-fous statiques validés."
+
+for scenario in service-routing network-policy; do
+  for required in \
+    "scenarios/${scenario}/curriculum/objectives.yaml" \
+    "scenarios/${scenario}/curriculum/rubric.yaml" \
+    "scenarios/${scenario}/student/README.md" \
+    "scenarios/${scenario}/solution/README.md" \
+    "scenarios/${scenario}/grader/verify.sh" \
+    "scenarios/${scenario}/setup.sh" \
+    "scenarios/${scenario}/cleanup.sh"; do
+    [[ -f "${required}" ]] || { echo "Missing ${required}" >&2; exit 1; }
+  done
+  points="$(ruby -e 'require "yaml"; puts YAML.load_file(ARGV[0]).dig("spec", "checks").sum { |c| c.fetch("points") }' "scenarios/${scenario}/curriculum/rubric.yaml")"
+  [[ "${points}" == 100 ]] || { echo "Rubric ${scenario} totals ${points}" >&2; exit 1; }
+done
+
+echo "OK: contrats des micro-labs réseau validés."
 "${ROOT_DIR}/grader/tests/test-missing-resources.sh"
